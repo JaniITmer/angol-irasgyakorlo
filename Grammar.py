@@ -3,7 +3,7 @@ import language_tool_python
 
 @st.cache_resource
 def get_tool(dialect_code='en-GB'):
-    return language_tool_python.LanguageTool(dialect_code)
+    return language_tool_python.LanguageToolPublicAPI(dialect_code)
 
 def calculate_accuracy(text: str, matches) -> int:
     if not text.strip():
