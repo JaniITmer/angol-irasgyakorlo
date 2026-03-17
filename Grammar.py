@@ -3,7 +3,10 @@ import language_tool_python
 
 @st.cache_resource
 def get_tool(dialect_code='en-GB'):
-    return language_tool_python.LanguageToolPublicAPI(dialect_code)
+    try:
+        return language_tool_python.LanguageToolPublicAPI(dialect_code)
+    except Exception:
+        return None
 
 def calculate_accuracy(text: str, matches) -> int:
     if not text.strip():
@@ -40,8 +43,15 @@ if st.button("Ellenőrizd / Analyze"):
     if text.strip():
         with st.spinner("Ellenőrzés folyamatban..."):
             tool = get_tool(dialect_code)
-            matches = tool.check(text)
-            
+
+            if tool is None:
+                st.error("API túlterhelt 😔 Próbáld meg később.")
+                st.stop()
+            try:
+                matches = tool.check(text)
+            except language_tool_python.exceptions.RateLimitError:
+                st.error("Túl sok kérés 😔 Várj pár másodpercet és próbáld újra.")
+                st.stop()
             score = calculate_accuracy(text, matches)
             st.subheader(f"Accuracy Score: {score}%")
             
