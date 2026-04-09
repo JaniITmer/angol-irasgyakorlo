@@ -23,15 +23,22 @@ def calculate_accuracy(text: str, matches) -> int:
     
     return max(0, min(100, round(score)))
 
-st.set_page_config(page_title="Angol Írásgyakorló", layout="wide")
-st.title("Angol írásgyakorló – Grammar Checker")
+LANGUAGE_OPTIONS = {
+    "British English (en-GB)": "en-GB",
+    "American English (en-US)": "en-US",
+    "German (de-DE)": "de-DE",
+    "Spanish (es)": "es",
+}
+
+st.set_page_config(page_title="Írásgyakorló", layout="wide")
+st.title("Írásgyakorló – Grammar Checker")
 
 dialect = st.selectbox(
-    "Válassz dialektust",
-    ["British English (en-GB)", "American English (en-US)"],
+    "Válassz nyelvet / dialektust",
+    list(LANGUAGE_OPTIONS.keys()),
     index=0
 )
-dialect_code = "en-GB" if "British" in dialect else "en-US"
+dialect_code = LANGUAGE_OPTIONS[dialect]
 
 text = st.text_area(
     "Írj egy mondatot vagy bekezdést...",
@@ -110,7 +117,7 @@ if st.button("Ellenőrizd / Analyze"):
                         st.markdown("---")
             
             speak_text = corrected if corrected and corrected.strip() else text
-            dialect_lang = "en-GB" if dialect_code == "en-GB" else "en-US"
+            dialect_lang = dialect_code
             escaped_text = speak_text.replace('\\', '\\\\').replace('`', '\\`').replace('$', '\\$')
             
             html_component = f"""
